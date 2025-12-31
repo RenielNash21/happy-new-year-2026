@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year 2026 🎆</title>
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    position: absolute;
+    top: 35%;
+    width: 100%;
+    text-align: center;
+    color: gold;
+    font-size: 65px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 15px red, 0 0 30px orange, 0 0 50px yellow;
+    z-index: 10;
+}
+
+h2 {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 28px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px cyan;
+    z-index: 10;
+}
+</style>
+</head>
+<body>
+
+<h1>🎆 HAPPY NEW YEAR 2026 🎆</h1>
+<h2>Draizen • Jack • Ianne (My Wife)</h2>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let fireworks = [];
+
+function Firework() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height;
+    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    this.exploded = false;
+    this.particles = [];
+}
+
+Firework.prototype.update = function () {
+    if (!this.exploded) {
+        this.y -= 6;
+        if (this.y < canvas.height / 2) {
+            this.exploded = true;
+            for (let i = 0; i < 40; i++) {
+                this.particles.push({
+                    x: this.x,
+                    y: this.y,
+                    dx: (Math.random() - 0.5) * 7,
+                    dy: (Math.random() - 0.5) * 7,
+                    life: 60
+                });
+            }
+        }
+    }
+};
+
+Firework.prototype.draw = function () {
+    if (!this.exploded) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    } else {
+        this.particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            p.x += p.dx;
+            p.y += p.dy;
+            p.life--;
+        });
+        this.particles = this.particles.filter(p => p.life > 0);
+    }
+};
+
+function animate() {
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (Math.random() < 0.06) fireworks.push(new Firework());
+
+    fireworks.forEach(f => {
+        f.update();
+        f.draw();
+    });
+
+    fireworks = fireworks.filter(f => !f.exploded || f.particles.length > 0);
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
